@@ -3,11 +3,6 @@
     <div class="Home">
       <img alt="Vue logo" src="../assets/logo.png">
       <HelloWorld msg="Welcome to Your Vue.js App"/>
-      <ul id="example">
-        <li v-for="(msg, index) in messages" :key="index">
-          <p>{{ msg.text }}</p>
-        </li>
-      </ul>
     </div>
     <div class="camera-box">
       <div style="display: flex; justify-content: center;">
@@ -34,25 +29,9 @@
       </div>
       <vue-picture-swipe :items="items"></vue-picture-swipe>
     </div>
-    <b-form v-if="this.allPhotosTaken()" @submit="onSubmit2" class="container">
+    <b-form v-if="this.allPhotosTaken()" @submit="onSubmit" class="container">
       <b-button-group>
         <b-button type="submit" variant="primary">send photos</b-button>
-      </b-button-group>
-    </b-form>
-    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-form-group id="form-text-group"
-                    label="Text:"
-                    label-for="form-text-input">
-        <b-form-input id="form-text-input"
-                      type="text"
-                      v-model="addMessageForm.text"
-                      required
-                      placeholder="Enter text">
-        </b-form-input>
-      </b-form-group>
-      <b-button-group>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
       </b-button-group>
     </b-form>
   </div>
@@ -77,11 +56,6 @@ export default {
       canvasHeight: 200,
       canvasWidth: 190,
       items: [],
-      messages: [],
-      addMessageForm: {
-        text: '',
-      },
-      message: '',
     };
   },
   methods: {
@@ -150,12 +124,7 @@ export default {
       );
     },
     sendPhotos(photoItems) {
-      // const uniquePictureName = this.generateCapturePhotoName();
-      // const capturedPhotoFile = this.dataURLtoFile(dataURLs, `${uniquePictureName}.jpg`);
       const path = 'http://localhost:5000/boundaryBox';
-      // const formData = new FormData();
-      // formData.append('photos', photoItems.length);
-      // Upload image api
       const data = {
         photos: photoItems,
       };
@@ -164,69 +133,10 @@ export default {
         console.log(response);
       });
     },
-
-    generateCapturePhotoName() {
-      return Math.random().toString(36).substring(2, 15);
-    },
-    dataURLtoFile(dataURL, filename) {
-      const arr = dataURL.split(',');
-      const mime = arr[0].match(/:(.*?);/)[1];
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-
-      // eslint-disable-next-line no-plusplus
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename, { type: mime });
-    },
-    onSubmit2(evt) {
+    onSubmit(evt) {
       evt.preventDefault();
       this.sendPhotos(this.items);
     },
-    getMessages() {
-      const path = 'http://localhost:5000/messages';
-      axios.get(path)
-        .then((res) => {
-          this.messages = res.data.messages;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
-    addText(payload) {
-      const path = 'http://localhost:5000/messages';
-      axios.post(path, payload)
-        .then(() => {
-          this.getMessages();
-          this.message = 'Text added!';
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.log(error);
-          this.getMessages();
-        });
-    },
-    initForm() {
-      this.addMessageForm.text = '';
-    },
-    onSubmit(evt) {
-      evt.preventDefault();
-      const payload = {
-        text: this.addMessageForm.text,
-      };
-      this.addText(payload);
-      this.initForm();
-    },
-    onReset(evt) {
-      evt.preventDefault();
-      this.initForm();
-    },
-  },
-  created() {
-    this.getMessages();
   },
 };
 </script>
