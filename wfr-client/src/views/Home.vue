@@ -1,20 +1,20 @@
 <template>
   <div class="container">
     <div class="Home">
-      <img alt="Vue logo" src="../assets/logo.png">
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <img alt="Vue logo" src="../assets/camera-outline.svg" height="200" width="200">
+      <h1>Webcam Face Recognition Demo</h1>
     </div>
     <div class="camera-box">
       <div style="display: flex; justify-content: center;">
         <img style="height: 25px;" v-if="isCameraOpen"
-             src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
+             src="../assets/camera-outline.svg"
              class="button-img camera-shoot" @click="capture"/>
         <div class="camera-button">
           <button type="button" class="button is-rounded cam-button"
                   style="margin-left: 40%; background-color: white; border: 0px;"
                   @click="toggleCamera">
         <span v-if="!isCameraOpen"><img style="height: 25px;" class="button-img"
-                                        src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
+                                        src="../assets/camera-outline.svg"></span>
             <span v-else><img style="height: 25px;" class="button-img"
                               src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
           </button>
@@ -41,12 +41,10 @@
 // @ is an alias to /src
 import axios from 'axios';
 import VuePictureSwipe from 'vue-picture-swipe';
-import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld,
     VuePictureSwipe,
   },
   data() {
