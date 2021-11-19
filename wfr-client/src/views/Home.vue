@@ -51,8 +51,8 @@ export default {
     return {
       numPictures: 5,
       isCameraOpen: false,
-      canvasHeight: 200,
-      canvasWidth: 190,
+      canvasHeight: 500,
+      canvasWidth: 500,
       items: [],
     };
   },
