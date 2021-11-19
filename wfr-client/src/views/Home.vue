@@ -16,7 +16,7 @@
         <span v-if="!isCameraOpen"><img style="height: 25px;" class="button-img"
                                         src="../assets/camera-outline.svg"></span>
             <span v-else><img style="height: 25px;" class="button-img"
-                              src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
+                              src="../assets/close-circle-outline.svg"></span>
           </button>
         </div>
       </div>
