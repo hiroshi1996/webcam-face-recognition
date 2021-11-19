@@ -40,7 +40,7 @@ def prepare_for_model(image, shape):
     image_buffer = image['src'].split(',')[1]
     # Convert to cv2 image and get shape
     origin_image = convert_to_cv2(image_buffer)
-    height, width, channel = origin_image.shape
+    height, width, _ = origin_image.shape
     # Resize, convert BGR representation of cv2 to RGB and normalize
     cv2image = cv2.resize(origin_image, shape)
     rgb_image = cv2image[..., ::-1].astype(np.float32)
@@ -54,14 +54,14 @@ def get_bbox(prediction, input_shape, target_shape):
     # Define the anchor boxes for object detection
     anchors = [[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]
     # Define prob. threshold for detected objects
-    threshold = 0.7
+    threshold = 0.6
     # Get box for each detected object
     boxes = []
     for i in range(len(prediction)):
         # Decode the prediction and add to list
         boxes += decode_netout(prediction[i][0], anchors[i], threshold, input_shape[0], input_shape[1])
     # Adapt the sizes of boxes for the original image
-    boxes = correct_yolo_boxes(boxes, input_shape[0], input_shape[1], target_shape[0], target_shape[1])
+    boxes = correct_yolo_boxes(boxes, target_shape[0], target_shape[1], input_shape[0], input_shape[1])
     # Get only maximal boxes around detected objects (with threshold 0.5)
     do_nms(boxes, 0.5)
     # Get properties of the detected objects
