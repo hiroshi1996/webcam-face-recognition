@@ -1,4 +1,4 @@
-# Webcam Face Recognition Demo
+# Webcam Object detection Demo
 
 
 docker-compose up -d --build
