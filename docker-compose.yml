@@ -7,7 +7,7 @@ services:
             - 5000:5000
         restart: always
     wfr-client:
-        build: ./wfr-client
+        build: wod-client
         ports:
             - 8080:3000
         restart: always
