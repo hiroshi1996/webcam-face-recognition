@@ -31,6 +31,7 @@ def _sigmoid(x):
     return 1. / (1. + np.exp(-x))
 
 
+# Function for decoding the prediction to boundary boxes
 def decode_netout(netout, anchors, obj_thresh, net_h, net_w):
     grid_h, grid_w = netout.shape[:2]
     nb_box = 3
@@ -62,6 +63,7 @@ def decode_netout(netout, anchors, obj_thresh, net_h, net_w):
     return boxes
 
 
+# Function for adapting boundary boxes for original image size
 def correct_yolo_boxes(boxes, image_h, image_w, net_h, net_w):
     new_w, new_h = net_w, net_h
     for i in range(len(boxes)):
@@ -99,6 +101,7 @@ def bbox_iou(box1, box2):
     return float(intersect) / union
 
 
+# Function to get only maximal boxes around detected objects
 def do_nms(boxes, nms_thresh):
     if len(boxes) > 0:
         nb_class = len(boxes[0].classes)
@@ -115,7 +118,7 @@ def do_nms(boxes, nms_thresh):
                     boxes[index_j].classes[c] = 0
 
 
-# get all of the results above a threshold
+# Function to get all of the results above a threshold
 def get_boxes(boxes, labels, thresh):
     v_boxes, v_labels, v_scores = list(), list(), list()
     # enumerate all boxes

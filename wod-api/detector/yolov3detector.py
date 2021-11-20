@@ -61,7 +61,7 @@ def get_bbox(prediction, input_shape, target_shape):
         boxes += decode_netout(prediction[i][0], anchors[i], threshold, input_shape[0], input_shape[1])
     # Adapt the sizes of boxes for the original image
     boxes = correct_yolo_boxes(boxes, target_shape[0], target_shape[1], input_shape[0], input_shape[1])
-    # Get only maximal boxes around detected objects (with threshold 0.5)
+    # Get only maximal boxes around detected objects (with overlapping threshold 0.5)
     do_nms(boxes, 0.5)
     # Get properties of the detected objects
     b_boxes, b_labels, b_scores = get_boxes(boxes, mscoco_labels, threshold)
