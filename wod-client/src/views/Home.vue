@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <b-overlay :show="waitForResponse" rounded="sm" >
     <div class="Home">
       <img alt="Vue logo" src="../assets/camera-outline.svg" height="200" width="200">
       <h1>Webcam Face Recognition Demo</h1>
@@ -23,17 +24,21 @@
       <div style="height: 200px">
         <div v-if="isCameraOpen" class="camera-canvas">
           <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
-          <canvas v-show="false" id="photoTaken" ref="canvas" :width="canvasWidth"
+          <canvas v-show="false" id="photoTaken" :width="canvasWidth"
                   :height="canvasHeight"></canvas>
+          <canvas v-show="false" id="thumbnailTaken" :width="thumbnailWidth"
+                  :height="thumbnailHeight"></canvas>
         </div>
       </div>
       <vue-picture-swipe :items="items"></vue-picture-swipe>
     </div>
-    <b-form v-if="this.allPhotosTaken()" @submit="onSubmit" class="container">
+    <b-form v-if="this.allPhotosTaken()" @click="waitForResponse = true"
+            @submit="onSubmit" class="container">
       <b-button-group>
         <b-button type="submit" variant="primary">send photos</b-button>
       </b-button-group>
     </b-form>
+    </b-overlay>
   </div>
 </template>
 
@@ -49,10 +54,13 @@ export default {
   },
   data() {
     return {
+      waitForResponse: false,
       numPictures: 5,
       isCameraOpen: false,
       canvasHeight: 500,
       canvasWidth: 500,
+      thumbnailHeight: 100,
+      thumbnailWidth: 100,
       items: [],
     };
   },
@@ -99,22 +107,29 @@ export default {
         for (let i = 0; i < this.numPictures; i++) {
           // eslint-disable-next-line no-await-in-loop
           await new Promise((resolve) => setTimeout(resolve, 2000));
-          const context = self.$refs.canvas.getContext('2d');
+          const photoCanvas = document.getElementById('photoTaken');
+          const context = photoCanvas.getContext('2d');
           context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
-          const dataUrl = self.$refs.canvas.toDataURL('image/jpeg')
+          const dataUrl = photoCanvas.toDataURL('image/jpeg')
             .replace('image/jpeg', 'image/octet-stream');
-          self.addToPhotoGallery(dataUrl);
+          const thumbnailCanvas = document.getElementById('thumbnailTaken');
+          const thumbContext = thumbnailCanvas.getContext('2d');
+          thumbContext.drawImage(self.$refs.camera, 0, 0,
+            self.thumbnailWidth, self.thumbnailHeight);
+          const thumbnailUrl = thumbnailCanvas.toDataURL('image/jpeg')
+            .replace('image/jpeg', 'image/octet-stream');
+          self.addToPhotoGallery(dataUrl, thumbnailUrl);
         }
         self.isCameraOpen = false;
         self.stopCameraStream();
       }, FLASH_TIMEOUT);
     },
 
-    addToPhotoGallery(dataURI) {
+    addToPhotoGallery(dataURI, thumbnailURI) {
       this.items.push(
         {
           src: dataURI,
-          thumbnail: dataURI,
+          thumbnail: thumbnailURI,
           w: this.canvasWidth,
           h: this.canvasHeight,
           alt: 'some numbers on a grey background', // optional alt attribute for thumbnail image
@@ -129,11 +144,22 @@ export default {
       axios.post(path, data).then((response) => {
         this.items = response.data.editedPhotos;
         console.log(response);
+        this.waitForResponse = false;
       });
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.sendPhotos(this.items);
+    },
+    resizeThumbnail(base64Str) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = base64Str;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, this.thumbnailWidth, this.thumbnailHeight);
+        resolve(canvas.toDataURL());
+      });
     },
   },
 };

@@ -26,10 +26,9 @@ def detect_objects(photos):
         b_image = draw_boxes(origin_image, b_boxes, b_labels, b_scores)
 
         # Convert result back to base64 format and append to result list
-        b_image = convert_to_base64(b_image)
-        data_url = 'data:image/octet-stream;base64,' + b_image.decode('utf-8')
+        data_url, thumbnail_url = convert_to_base64(b_image)
         boundary_photos.append({'src': data_url,
-                                'thumbnail': data_url, 'alt': 'some numbers on a grey background',
+                                'thumbnail': thumbnail_url, 'alt': 'some numbers on a grey background',
                                 'w': width, 'h': height})
 
     return boundary_photos
@@ -98,10 +97,18 @@ def convert_to_cv2(base64image):
 
 
 def convert_to_base64(cv2image):
+    # Create data_url for image
     _, img_array = cv2.imencode('.jpg', cv2image)
     img_bytes = img_array.tobytes()
     img = base64.b64encode(img_bytes)
-    return img
+    data_url = 'data:image/octet-stream;base64,' + img.decode('utf-8')
+    # Create data_url for thumbnail
+    thumbnail_img = cv2.resize(cv2image, (100, 100))
+    _, thumbnail_array = cv2.imencode('.jpg', thumbnail_img)
+    thumbnail_bytes = thumbnail_array.tobytes()
+    thumbnail = base64.b64encode(thumbnail_bytes)
+    thumbnail_url = 'data:image/octet-stream;base64,' + thumbnail.decode('utf-8')
+    return data_url, thumbnail_url
 
 
 mscoco_labels = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
