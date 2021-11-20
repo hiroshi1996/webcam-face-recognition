@@ -1,4 +1,4 @@
-# wfr-client
+# wod-client
 
 ## Project setup
 ```
