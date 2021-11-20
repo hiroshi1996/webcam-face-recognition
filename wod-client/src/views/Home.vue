@@ -112,11 +112,13 @@ export default {
         for (let i = 0; i < this.numPictures; i += 1) {
           // eslint-disable-next-line no-await-in-loop
           await new Promise((resolve) => setTimeout(resolve, this.interval));
+          // Take photo and get url
           const photoCanvas = document.getElementById('photoTaken');
           const context = photoCanvas.getContext('2d');
           context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
           const dataUrl = photoCanvas.toDataURL('image/jpeg')
             .replace('image/jpeg', 'image/octet-stream');
+          // Get thumbnail and and get url
           const thumbnailCanvas = document.getElementById('thumbnailTaken');
           const thumbContext = thumbnailCanvas.getContext('2d');
           thumbContext.drawImage(self.$refs.camera, 0, 0,
@@ -130,11 +132,11 @@ export default {
       }, FLASH_TIMEOUT);
     },
 
-    addToPhotoGallery(dataURI, thumbnailURI) {
+    addToPhotoGallery(dataUrl, thumbnailUrl) {
       this.items.push(
         {
-          src: dataURI,
-          thumbnail: thumbnailURI,
+          src: dataUrl,
+          thumbnail: thumbnailUrl,
           w: this.canvasWidth,
           h: this.canvasHeight,
           alt: 'some numbers on a grey background', // optional alt attribute for thumbnail image
