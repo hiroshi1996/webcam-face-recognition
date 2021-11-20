@@ -1,45 +1,47 @@
 <template>
-  <div class="container">
-    <b-overlay :show="waitForResponse" rounded="sm" >
-    <div class="Home">
-      <img alt="Vue logo" src="../assets/camera-outline.svg" height="200" width="200">
-      <h1>Webcam Face Recognition Demo</h1>
-    </div>
-    <div class="camera-box">
-      <div style="display: flex; justify-content: center;">
-        <img style="height: 25px;" v-if="isCameraOpen"
-             src="../assets/camera-outline.svg"
-             class="button-img camera-shoot" @click="capture"/>
-        <div class="camera-button">
-          <button type="button" class="button is-rounded cam-button"
-                  style="margin-left: 40%; background-color: white; border: 0px;"
-                  @click="toggleCamera">
-        <span v-if="!isCameraOpen"><img style="height: 25px;" class="button-img"
-                                        src="../assets/camera-outline.svg"></span>
-            <span v-else><img style="height: 25px;" class="button-img"
-                              src="../assets/close-circle-outline.svg"></span>
-          </button>
-        </div>
-      </div>
-      <div style="height: 200px">
-        <div v-if="isCameraOpen" class="camera-canvas">
-          <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
-          <canvas v-show="false" id="photoTaken" :width="canvasWidth"
-                  :height="canvasHeight"></canvas>
-          <canvas v-show="false" id="thumbnailTaken" :width="thumbnailWidth"
-                  :height="thumbnailHeight"></canvas>
-        </div>
-      </div>
-      <vue-picture-swipe :items="items"></vue-picture-swipe>
-    </div>
-    <b-form v-if="this.allPhotosTaken()" @click="waitForResponse = true"
-            @submit="onSubmit" class="container">
-      <b-button-group>
-        <b-button type="submit" variant="primary">send photos</b-button>
-      </b-button-group>
-    </b-form>
+  <b-container class="container">
+    <b-overlay :show="waitForResponse" rounded="sm">
+      <b-row class="Home" align-h="center">
+        <img alt="Vue logo" src="../assets/camera-outline.svg" height="200" width="200">
+      </b-row>
+      <b-row class="Title mb-2" align-h="center">
+        <h1>Webcam Face Recognition Demo</h1>
+      </b-row>
+      <b-row class="camera-control mb-3" align-h="center">
+        <b-col v-if="!isCameraOpen">
+          <b-button variant="outline-success" @click="toggleCamera">
+            Start Webcam Stream
+          </b-button>
+        </b-col>
+        <b-col v-if="isCameraOpen">
+          <b-button variant="outline-primary" @click="capture">
+            Take Photos
+          </b-button>
+        </b-col>
+        <b-col v-if="isCameraOpen">
+          <b-button variant="outline-danger" @click="toggleCamera">
+            Close Webcam Stream
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row class="camera-canvas" align-h="center" v-if="isCameraOpen">
+        <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+        <canvas v-show="false" id="photoTaken" :width="canvasWidth"
+                :height="canvasHeight"></canvas>
+        <canvas v-show="false" id="thumbnailTaken" :width="thumbnailWidth"
+                :height="thumbnailHeight"></canvas>
+      </b-row>
+      <b-row class="mb-3" align-h="center">
+        <vue-picture-swipe :items="items"></vue-picture-swipe>
+      </b-row>
+      <b-row align-h="center">
+        <b-form v-if="this.isSubmittable()" @click="waitForResponse = true"
+                @submit="onSubmit" class="container">
+          <b-button type="submit" variant="primary">send photos</b-button>
+        </b-form>
+      </b-row>
     </b-overlay>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -55,6 +57,7 @@ export default {
   data() {
     return {
       waitForResponse: false,
+      editedPhotos: false,
       numPictures: 5,
       isCameraOpen: false,
       canvasHeight: 500,
@@ -66,6 +69,7 @@ export default {
   },
   methods: {
     toggleCamera() {
+      this.editedPhotos = false;
       if (this.isCameraOpen) {
         this.isCameraOpen = false;
         this.stopCameraStream();
@@ -89,8 +93,9 @@ export default {
           alert(`Browser doesn't support or there is some errors.${error}`);
         });
     },
-    allPhotosTaken() {
-      return this.items.length === this.numPictures;
+    isSubmittable() {
+      const allPhotosTaken = this.items.length === this.numPictures;
+      return allPhotosTaken && !this.editedPhotos;
     },
     stopCameraStream() {
       const tracks = this.$refs.camera.srcObject.getTracks();
@@ -145,21 +150,12 @@ export default {
         this.items = response.data.editedPhotos;
         console.log(response);
         this.waitForResponse = false;
+        this.editedPhotos = true;
       });
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.sendPhotos(this.items);
-    },
-    resizeThumbnail(base64Str) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = base64Str;
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, this.thumbnailWidth, this.thumbnailHeight);
-        resolve(canvas.toDataURL());
-      });
     },
   },
 };
