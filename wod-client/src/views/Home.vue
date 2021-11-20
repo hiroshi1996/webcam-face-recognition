@@ -5,7 +5,7 @@
         <img alt="Vue logo" src="../assets/camera-outline.svg" height="200" width="200">
       </b-row>
       <b-row class="Title mb-2" align-h="center">
-        <h1>Webcam Face Recognition Demo</h1>
+        <h1>Webcam Object Detection Demo</h1>
       </b-row>
       <b-row class="camera-control mb-3" align-h="center">
         <b-col v-if="!isCameraOpen">
@@ -59,6 +59,7 @@ export default {
       waitForResponse: false,
       editedPhotos: false,
       numPictures: 5,
+      interval: 2000,
       isCameraOpen: false,
       canvasHeight: 500,
       canvasWidth: 500,
@@ -108,10 +109,9 @@ export default {
       const FLASH_TIMEOUT = 50;
       const self = this;
       setTimeout(async () => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.numPictures; i++) {
+        for (let i = 0; i < this.numPictures; i += 1) {
           // eslint-disable-next-line no-await-in-loop
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+          await new Promise((resolve) => setTimeout(resolve, this.interval));
           const photoCanvas = document.getElementById('photoTaken');
           const context = photoCanvas.getContext('2d');
           context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
