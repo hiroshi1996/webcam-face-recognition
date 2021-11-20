@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from detector import facedetector
+from detector import yolov3detector
 
 
 # configuration
@@ -19,7 +19,7 @@ def boundary_box():
     response_object = {'status': 'success'}
     post_data = request.get_json()
     photos = post_data.get('photos')
-    edited_photos = facedetector.detect_objects(photos)
+    edited_photos = yolov3detector.detect_objects(photos)
     response_object['editedPhotos'] = edited_photos
 
     return jsonify(response_object)
