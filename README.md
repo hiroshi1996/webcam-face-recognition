@@ -99,6 +99,7 @@ was adapted
 - Convert and prepare images for the model
 - Predict the objects with the model
 - Get boundary boxes with corresponding labels and scores from the prediction
+(Consider only maximal boxes around object and scores above **0.6**)
 - Draw boxes with labels and scores adapted for the original images
 - Convert the images back to Base64 format and return the images
 
