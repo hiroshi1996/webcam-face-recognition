@@ -13,14 +13,16 @@ WORKDIR /home/myuser
 # Copy the dependencies
 COPY --chown=myuser:myuser requirements.txt requirements.txt
 
+# Add env path
+ENV PATH="/home/myuser/.local/bin:${PATH}"
+
 # Upgrade pip
 RUN pip3 install --upgrade pip
 
 # Install the dependencies
 RUN pip3 install --user -r requirements.txt
 
-# Add env path
-ENV PATH="/home/myuser/.local/bin:${PATH}"
+
 
 # Copy the files
 COPY --chown=myuser:myuser . .
