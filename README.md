@@ -111,7 +111,7 @@ was adapted
 https://testdriven.io/blog/developing-a-single-page-app-with-flask-and-vuejs/
 - Tutorial: How to implement Webcam in VueJs Applcation
 https://www.360learntocode.com/2020/12/how-to-implement-webcam-in-vuejs.html
-- YOLOv3
+- YOLOv3: https://arxiv.org/abs/1804.02767
 - MSCOCO: https://cocodataset.org/#home
 - Flask: https://flask.palletsprojects.com/en/2.0.x/
 - OpenCV: https://opencv.org/
