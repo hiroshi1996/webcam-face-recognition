@@ -22,10 +22,11 @@ RUN pip3 install --upgrade pip
 # Install the dependencies
 RUN pip3 install --user -r requirements.txt
 
-
-
 # Copy the files
 COPY --chown=myuser:myuser . .
+
+# Expose a port
+EXPOSE 5000
 
 # Executable commands
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
