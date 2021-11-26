@@ -1,7 +1,7 @@
 <template>
   <b-container class="container">
     <b-row class="about mb-3" align-h="center">
-      <h1>Welcome to Webcam Face Recognition Demo</h1>
+      <h1>Welcome to Webcam Object Detection Demo</h1>
     </b-row>
     <b-row class="usage mb-3" align-h="center">
       <h2>Usage:</h2>
